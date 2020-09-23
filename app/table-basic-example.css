@@ -1,0 +1,49 @@
+table {
+  width: 100%;
+}
+
+th.mat-header-cell, td.mat-cell {
+    text-align: center;
+    border: 1px solid #CCC;
+    padding: 0 !important;
+}
+
+th.mat-header-cell.cdk-column-actions.mat-column-actions.mat-table-sticky {
+    background: black;
+}
+ .header-cell-border{
+  /* padding: 1px;
+  border: 1px solid grey; */
+  /* padding-top: 2px; */
+}
+
+.bottom-level-cell{
+ width: 150px;
+}
+
+
+.placeholder-divs-above{
+  width: 100%;
+  height: 1rem;
+  border: 1px solid grey;
+  background-color: green;
+  color:white;
+}
+
+.placeholder-divs-below{
+  width: 100%;
+  height: 1rem;
+  border: 1px solid grey;
+  background-color: lightgrey;
+  color:white;
+}
+
+.default-background{
+ background-color: white;
+ color:black;
+}
+
+.primary-header-cell{
+  background-color: #0000ff8a;
+  color:white;
+}

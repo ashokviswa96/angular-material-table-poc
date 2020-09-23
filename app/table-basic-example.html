@@ -1,0 +1,87 @@
+<table mat-table [dataSource]="data_Structure.body" class="mat-elevation-z8" style="width:400px;" cdkDropListGroup>
+
+
+	<!-- Position Column -->
+	<ng-container *ngFor="let headerCol of data_Structure.headers;let parentColIndex=index;">
+		<ng-container [matColumnDef]="headerCol.id" [sticky]="isSticky(headerCol.id)"
+			[stickyEnd]="isStickyEnd(headerCol.id)">
+			<th mat-header-cell *matHeaderCellDef class="centered" cdkDropList cdkDropListLockAxis="x"
+				cdkDropListOrientation="horizontal" (cdkDropListDropped)="dropListDropped($event, parentColIndex)"
+				cdkDrag (cdkDragStarted)="dragStarted($event, parentColIndex)"
+				[cdkDragData]="{name: headerCol, columIndex: parentColIndex}">
+				<div>
+					<span style="position:absolute;right:0;" cdkDragHandle>D</span>
+					<ng-template #headerColumnTemplateRef let-headerCol="headerCol">
+						<div class="placeholder-divs-above"
+							*ngFor="let count of getPlaceHolderDivCountAbove(headerCol.primaryAtNestedLevel)"></div>
+
+						<div class="header-cell-border default-background">
+							<div style="border:1px solid grey;padding-top:2px;" [ngClass]="{
+                'bottom-level-cell': (!headerCol.subColumns || !headerCol.subColumns.length),
+                'primary-header-cell': headerCol.primary
+              }">{{headerCol.display}}
+								<span style="padding-left:3px" cdkDragHandle>D</span>
+
+								<!-- --- cells below:{{getPlaceHolderDivBelow(headerCol)}} -->
+							</div>
+							<ng-container *ngIf="headerCol.subColumns && headerCol.subColumns.length">
+								<div class="childColumns" cdkDropList cdkDropListLockAxis="x"
+									cdkDropListOrientation="horizontal"
+									(cdkDropListDropped)="dropListDroppedChild($event, colGroupidx)" cdkDrag
+									(cdkDragStarted)="dragStarted($event, colGroupidx)"
+									[cdkDragData]="{name: headerCol, columIndex: colGroupidx, isChildColGroup:true}">
+									<div class="header-cell-border" style="display:flex;">
+										<ng-template ngFor let-child let-index [ngForOf]="headerCol.subColumns">
+											<!-- Invoke the recursive template. -->
+											<ng-template [ngTemplateOutlet]="headerColumnTemplateRef"
+												[ngTemplateOutletContext]="{ headerCol: child, colGroupidx: index }">
+											</ng-template>
+										</ng-template>
+									</div>
+								</div>
+							</ng-container>
+							<div class="placeholder-divs-below" *ngFor="let count of getPlaceHolderDivBelow(headerCol)">
+								<!-- {{headerCol.level}} -->
+							</div>
+						</div>
+					</ng-template>
+					<ng-template [ngTemplateOutlet]="headerColumnTemplateRef"
+						[ngTemplateOutletContext]="{ headerCol: headerCol, colGroupidx: index }"></ng-template>
+
+				</div>
+			</th>
+			<td mat-cell *matCellDef="let element">
+				<!-- <ng-container>{{element[headerCol.id] | json}}</ng-container> -->
+				<!-- Define the recursive template. -->
+				<div style="display:flex;">
+					<ng-template #bodyColumnTemplateRef let-bodyCol="bodyCol">
+						<div class="bottom-level-cell" *ngIf="bodyCol.data">
+							{{bodyCol.data}}
+						</div>
+						<ng-container *ngIf="bodyCol.subColumns && bodyCol.subColumns.length" class="node__children">
+							<ng-template ngFor let-child [ngForOf]="bodyCol.subColumns">
+								<!-- Invoke the recursive template. -->
+								<ng-template [ngTemplateOutlet]="bodyColumnTemplateRef"
+									[ngTemplateOutletContext]="{ bodyCol: child }">
+									<!--
+						Because we are using nested ngTemplates (rather than the template
+						input of the ngFor directive), we have more control over how the
+						data is made available to the recursive template. In this case,
+						we're passing "child" through as "node".
+					-->
+								</ng-template>
+							</ng-template>
+						</ng-container>
+					</ng-template>
+					<ng-template [ngTemplateOutlet]="bodyColumnTemplateRef"
+						[ngTemplateOutletContext]="{ bodyCol: element[headerCol.id] }">
+					</ng-template>
+				</div>
+			</td>
+		</ng-container>
+	</ng-container>
+
+
+	<tr mat-header-row *matHeaderRowDef="columnReferenceIds; sticky: true"></tr>
+	<tr mat-row *matRowDef="let row; columns: columnReferenceIds;"></tr>
+</table>
